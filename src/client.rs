@@ -606,14 +606,14 @@ mod tests {
 
     #[test]
     fn new() {
-        let client = Client::new(APIKEY);
+        let client = Client::new(APIKEY).unwrap();
         assert_eq!(APIKEY, client.apikey);
         assert_eq!("https://api.treasuredata.com", client.endpoint);
     }
 
     #[test]
     fn endpoint() {
-        let mut client = Client::new(APIKEY);
+        let mut client = Client::new(APIKEY).unwrap();
         client.endpoint("https://foo.com");
         assert_eq!("https://foo.com", client.endpoint);
         client.endpoint("http://bar.com");
