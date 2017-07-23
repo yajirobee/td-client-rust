@@ -33,6 +33,7 @@ pub enum TreasureDataError {
     HttpError(::hyper::error::Error),
     ApiError(::hyper::status::StatusCode, String),
     InvalidArgumentError(InvalidArgument),
+    TlsError(::hyper_native_tls::native_tls::Error),
     IoError(::std::io::Error)
 }
 
@@ -57,6 +58,12 @@ impl From<::rmpv::decode::Error> for TreasureDataError {
 impl From<::hyper::error::Error> for TreasureDataError {
     fn from(err: ::hyper::error::Error) -> TreasureDataError {
         TreasureDataError::HttpError(err)
+    }
+}
+
+impl From<::hyper_native_tls::native_tls::Error> for TreasureDataError {
+    fn from(err: ::hyper_native_tls::native_tls::Error) -> TreasureDataError {
+        TreasureDataError::TlsError(err)
     }
 }
 
@@ -96,6 +103,7 @@ impl Error for TreasureDataError {
             TreasureDataError::HttpError(ref x) => x.description(),
             TreasureDataError::ApiError(..) =>
                 "recieved unexpected status code",
+            TreasureDataError::TlsError(ref x) => x.description(),
             TreasureDataError::InvalidArgumentError(ref x) => x.description(),
             TreasureDataError::IoError(ref x) => x.description()
         }
@@ -110,6 +118,7 @@ impl Error for TreasureDataError {
             TreasureDataError::TimeStampParseError(ref x) => Some(x),
             TreasureDataError::HttpError(ref x) => Some(x),
             TreasureDataError::ApiError(..) => None,
+            TreasureDataError::TlsError(ref x) => Some(x),
             TreasureDataError::InvalidArgumentError(ref x) => Some(x),
             TreasureDataError::IoError(ref x) => Some(x)
         }

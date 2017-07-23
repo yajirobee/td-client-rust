@@ -90,18 +90,18 @@ impl RequestExecutor for DefaultRequestExecutor {
 }
 
 impl Client <DefaultRequestExecutor> {
-    pub fn new(apikey: &str) -> Client<DefaultRequestExecutor> {
-        let tls = NativeTlsClient::new().unwrap();
+    pub fn new(apikey: &str) -> Result<Client<DefaultRequestExecutor>, TreasureDataError> {
+        let tls = try!(NativeTlsClient::new());
         let connector = HttpsConnector::new(tls);
         let client = ::hyper::Client::with_connector(connector);
 
-        Client {
+        Ok(Client {
             request_exec: DefaultRequestExecutor::new(apikey),
             apikey: apikey.to_string(),
             endpoint: DEFAULT_API_ENDPOINT.to_string(),
             import_endpoint: DEFAULT_API_IMPORT_ENDPOINT.to_string(),
             http_client: client
-        }
+        })
     }
 }
 
